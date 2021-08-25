@@ -1,0 +1,59 @@
+
+import java.util.LinkedList;
+import java.util.List;
+import javax.swing.JOptionPane;
+
+
+
+/**
+ *
+ * @author jenna
+ */
+public class Main {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        //String textName=JOptionPane.showInputDialog(null,"File Name");
+      Lexer lex = new Lexer(args[0]);
+        System.out.println("Lexer finished with no errors");
+        Parser parser = new Parser(lex.getTokens());
+        parser.start();
+
+        Scope s = new Scope();
+        s.setTree(parser.getTree());
+        s.setTable(parser.getTable());
+        s.addScope();
+        System.out.println("Scoping finished");
+
+        SemanticAnalysis a = new SemanticAnalysis(s.getTree());
+        a.buildTable();
+        a.checkSemantics();
+
+        TypeCheck t = new TypeCheck();
+        t.setTable(a.getTable());
+        t.setTree(a.getTree());
+        t.checkTypes();
+        System.out.println("Type Checking finished without errors");
+        
+        ValueFlow v = new ValueFlow();
+        v.setTable(t.getTable());
+        v.setTree(t.getTree());
+        v.setvTable(t.getvTable());
+        v.checkValueFlow();
+        
+       CodeGeneration cg = new CodeGeneration();
+       cg.setTable(v.getTable());
+       cg.setTree(v.getTree());
+       cg.setvTable(v.getvTable());
+       cg.generateCode();
+        System.out.println("Basic Code generation complete");
+        System.out.println("Basic Code:");
+       cg.printCode();
+
+     
+       
+    }
+    
+}
