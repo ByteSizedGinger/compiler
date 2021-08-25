@@ -1,0 +1,7 @@
+if (24>17){
+a=15 add 2;
+}else{
+b=12 sub 3;
+c="hello h";
+}
+if17
